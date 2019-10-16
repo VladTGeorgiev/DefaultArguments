@@ -1,17 +1,37 @@
-function add(m, b) {
+function add(a, b) {
     return a + b;
 }
 
 let defaultArguments = (fn, params) =>{
     let fnString = String(fn)
-    let params = [] // iterate over the functions's arguments, compare to passed in params, set values
-    let x = params.a || 0
-    let y = params.b || 0
+    let functionArguments = fn.toString().replace(/^.*\(|\)(.|\s)*$/g, '');
+console.log(functionArguments)
+let fff = functionArguments.match(/[a-z]/gi)
+console.log(fff)
+    const functionArgumentsObject = fff.reduce((o, key) => Object.assign(o, {[key]: 0}), {});
+// console.log(functionArgumentsObject)
+    let combinedObject = {...functionArgumentsObject, ...params}
+// console.log(combinedObject)
+    let kkk = []
+    for(let [key, value] of Object.entries(combinedObject)) {
+        let z = key
+        let l = value
+        let kk = `${z} ${l}`
+        kkk.push(kk)
+    }
+let kkkk = kkk.toString().replace(/\s+/g, '=')
+// console.log(kkkk)
+
+    let c = fff.toString().replace(',', '+')
+// console.log(c)
+
     let n = 2
-    var name = fnString.match(new RegExp('^(?:\\w+\\W+){' + --n + '}(\\w+)'));
-    var func = new Function("return " + 'function' + ' ' + name[1] + `(a = ${x}, b = ${y}) { return a + b; }`)();
+    let name = fnString.match(new RegExp('^(?:\\w+\\W+){' + --n + '}(\\w+)'));
+    let func = new Function("return " + 'function' + ' ' + name[1] + '(' + kkkk + ')' + '{ return ' + c  +'; }')();
     return func
 }
+
+
 
 const add2 = defaultArguments(add, { b:9 })
 
