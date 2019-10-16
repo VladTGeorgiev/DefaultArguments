@@ -8,18 +8,9 @@ let defaultArguments = (fn, params) =>{
     let y = params.b || 0
     let n = 2
     var name = fnString.match(new RegExp('^(?:\\w+\\W+){' + --n + '}(\\w+)'));
+    console.log(name[1])
     var func = new Function("return " + 'function' + ' ' + name[1] + `(a = ${x}, b = ${y}) { return a + b; }`)();
-    // console.log(func)
     return func
-
-//     const tmp  = {
-//         [name]: function(){
-//            return a + b
-//         }
-//     }
-//     const my = tmp[name]
-//     console.log(my) 
-// console.log(my.name)
 }
 
 const add2 = defaultArguments(add, { b:9 })
@@ -31,5 +22,10 @@ console.log(add2())
 const add3 = defaultArguments(add2, { b: 3, a: 2})
 
 console.log(add3(10))
-// console.log(add3())
-// console.log(add3(undefined, 10))
+console.log(add3())
+console.log(add3(undefined, 10))
+
+const add4 = defaultArguments(add3, { c: 3})
+
+console.log(add3(10))
+console.log(add3(10, 10))
