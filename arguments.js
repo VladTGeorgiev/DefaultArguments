@@ -2,53 +2,63 @@ function add(a, b) {
     return a + b
 }
 
-let defaultArguments = (passedInFunction, params) =>{
-    let passedInFunctionString = String(passedInFunction);
+const defaultArguments = (passedInFunction, params) => {
+    const passedInFunctionString = String(passedInFunction);
 
-    let functionArguments = passedInFunction.toString().replace(/^.*\(|\)(.|\s)*$/g, '');
-    let functionArgumentsArray = functionArguments.split(',')
-    let functionArgumentsArrayExcludingOldArguments = functionArgumentsArray.map(el => el.match(/^[^=]+/))
-    let functionArgumentsPlaceholders =functionArgumentsArrayExcludingOldArguments.map(el => el[0]).toString().match(/[a-z]/gi) 
-    const functionArgumentsObject = functionArgumentsPlaceholders.reduce((o, key) => Object.assign(o, {[key]: undefined}), {});
+    const functionArguments = passedInFunction.toString().replace(/^.*\(|\)(.|\s)*$/g, '');
+    const functionArgumentsArray = functionArguments.split(',');
+    const functionArgumentsArrayExcludingOldArguments = functionArgumentsArray.map(el => el.match(/^[^=]+/));
+    const functionArgumentsPlaceholders = functionArgumentsArrayExcludingOldArguments.map(el => el[0]).toString().match(/[a-z]/gi);
+    const functionArgumentsObject = functionArgumentsPlaceholders.reduce((o, key) => Object.assign(o, {
+        [key]: undefined
+    }), {});
 
-    let combinedObject = {...functionArgumentsObject, ...params}
+    const combinedObject = {
+        ...functionArgumentsObject,
+        ...params
+    };
 
-    let newFunctionArguments = [];
-    for(let [key, value] of Object.entries(combinedObject)) {
-        let combined = `${key} ${value}`
+    const newFunctionArguments = [];
+    for (let [key, value] of Object.entries(combinedObject)) {
+        const combined = `${key} ${value}`
         newFunctionArguments.push(combined);
-    }
-
-    let newFunctionArgumentsWithDefaultValues = newFunctionArguments.toString().replace(/\s+/g, '=');
+    };
+    const newFunctionArgumentsWithDefaultValues = newFunctionArguments.toString().replace(/\s+/g, '=');
 
     let passedInFunctionNamePlace = 2
-    let newFunctionName = passedInFunctionString.match(new RegExp('^(?:\\w+\\W+){' + --passedInFunctionNamePlace + '}(\\w+)'));
+    const newFunctionName = passedInFunctionString.match(new RegExp('^(?:\\w+\\W+){' + --passedInFunctionNamePlace + '}(\\w+)'));
 
-    let newFunctionReturn = passedInFunctionString.match(new RegExp('(?<=return).*'));
+    const newFunctionReturn = passedInFunctionString.match(new RegExp('(?<=return).*'));
+    const newFunctionReturnArguments = newFunctionReturn[0].match(new RegExp('([^;]+)'));
 
-    let newFunctionReturnArguments = newFunctionReturn[0].match(new RegExp('([^;]+)'));
+    const newFunction = new Function("return " + 'function' + ' ' + newFunctionName[1] + '(' + newFunctionArgumentsWithDefaultValues + ')' + '{ return ' + newFunctionReturnArguments + '; }')();
 
-    let newFunction = new Function("return " + 'function' + ' ' + newFunctionName[1] + '(' + newFunctionArgumentsWithDefaultValues + ')' + '{ return ' + newFunctionReturnArguments  +'; }')();
     return newFunction
 }
 
 
-
-const add2 = defaultArguments(add, { b:9 })
+const add2 = defaultArguments(add, {
+    b: 9
+})
 
 console.log(add2(10)) // => 19
 console.log(add2(10, 7)) // => 17
 console.log(add2()) // NaN
 
 
-const add3 = defaultArguments(add2, { b: 3, a: 2})
+const add3 = defaultArguments(add2, {
+    b: 3,
+    a: 2
+})
 
 console.log(add3(10)) // => 13
 console.log(add3()) // => 5
 console.log(add3(undefined, 10)) // => 12
 
 
-const add4 = defaultArguments(add, { c: 3})
+const add4 = defaultArguments(add, {
+    c: 3
+})
 
-console.log(add4(10))// NaN
+console.log(add4(10)) // NaN
 console.log(add4(10, 10)) // => 20
