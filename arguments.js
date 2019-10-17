@@ -4,21 +4,21 @@ function add(a, b) {
 
 let defaultArguments = (passedInFunction, params) =>{
     let passedInFunctionString = String(passedInFunction);
+
     let functionArguments = passedInFunction.toString().replace(/^.*\(|\)(.|\s)*$/g, '');
-
-    let functionArgumentsPlaceholders = functionArguments.match(/[a-z]/gi);
-
+    let functionArgumentsArray = functionArguments.split(',')
+    let functionArgumentsArrayExcludingOldArguments = functionArgumentsArray.map(el => el.match(/^[^=]+/))
+    let functionArgumentsPlaceholders =functionArgumentsArrayExcludingOldArguments.map(el => el[0]).toString().match(/[a-z]/gi) 
     const functionArgumentsObject = functionArgumentsPlaceholders.reduce((o, key) => Object.assign(o, {[key]: undefined}), {});
 
     let combinedObject = {...functionArgumentsObject, ...params}
 
     let newFunctionArguments = [];
     for(let [key, value] of Object.entries(combinedObject)) {
-        let z = key
-        let l = value
-        let kk = `${z} ${l}`
-        newFunctionArguments.push(kk);
+        let combined = `${key} ${value}`
+        newFunctionArguments.push(combined);
     }
+
     let newFunctionArgumentsWithDefaultValues = newFunctionArguments.toString().replace(/\s+/g, '=');
 
     let passedInFunctionNamePlace = 2
@@ -40,11 +40,13 @@ console.log(add2(10)) // => 19
 console.log(add2(10, 7)) // => 17
 console.log(add2()) // NaN
 
+
 const add3 = defaultArguments(add2, { b: 3, a: 2})
 
 console.log(add3(10)) // => 13
 console.log(add3()) // => 5
 console.log(add3(undefined, 10)) // => 12
+
 
 const add4 = defaultArguments(add, { c: 3})
 
